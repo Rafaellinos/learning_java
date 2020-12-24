@@ -26,14 +26,13 @@ public class NumberToWords {
     }
 
     public static int reverse(int number) {
-        int reversedNumber;
-        int toReverseNumber = Math.abs(number);
-        int lastCurrentNumber;
-        while (toReverseNumber > 0) {
-//             = toReverseNumber % 10;
-            toReverseNumber /= 10;
+        int reversed = 0;
+        while (number > 0) {
+            int digit = number % 10; // extrair o ultimo digito
+            reversed = (reversed * 10) + digit;
+            number /= 10;
         }
-
+        return reversed;
     }
 
     public static int getDigitCount(int number) {
@@ -52,18 +51,32 @@ public class NumberToWords {
     }
 
     public static void numberToWords(int number) {
-        int lastNumber;
-        while (number > 0) {
-            lastNumber = number % 10;
-            number /= 10;
-            System.out.println(numberToWord(lastNumber));
+        if (number < 0) {
+            System.out.println("Invalid Value");
+        } else {
+            int lastNumber;
+            int numberBkp = number;
+            number = reverse(number);
+            while (number > 0) {
+                lastNumber = number % 10;
+                number /= 10;
+                System.out.println(numberToWord(lastNumber));
+            }
+            int i = getDigitCount(numberBkp) - getDigitCount(reverse(numberBkp));
+            for (; i > 0; i --) {
+                System.out.println(numberToWord(0));
+            }
         }
+
     }
 
     public static void main(String[] args) {
-        System.out.println(getDigitCount(0));
-        System.out.println(getDigitCount(123));
-        System.out.println(getDigitCount(-12));
-        System.out.println(getDigitCount(5200));
+        numberToWords(100);
+        System.out.println("-----");
+        numberToWords(1010);
+        System.out.println("-----");
+        numberToWords(1000);
+        System.out.println("-----");
+        numberToWords(-12);
     }
 }
