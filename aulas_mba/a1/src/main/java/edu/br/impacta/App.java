@@ -19,20 +19,20 @@ public class App
     {
         System.out.println( "Bem vindo ao Java!" );
 
-        Types.variaveis();
-
-        Controls.switchAndMore();
-
-        Collections.listsAndMaps();
-
-        Dynamics.tasteDynamics();
-
-        Objects.playOO();
-
-        Functions.playFunctional();
-
+//        Types.variaveis();
+//
+//        Controls.switchAndMore();
+//
+//        Collections.listsAndMaps();
+//
+//        Dynamics.tasteDynamics();
+//
+//        Objects.playOO();
+//
+//        Functions.playFunctional();
+//
         Streams.playStreams();
 
-        Async.playAsync();
+//        Async.playAsync();
     }
 }
