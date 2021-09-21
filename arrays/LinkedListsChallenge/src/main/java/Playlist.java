@@ -1,12 +1,9 @@
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.ListIterator;
-import java.util.Scanner;
+import java.util.*;
 
 public class Playlist {
 
     private String name;
-    private LinkedList<Album> albums;
+    private List<Album> albums;
 
     public Playlist(String name) {
         this.name = name;
@@ -85,7 +82,7 @@ public class Playlist {
         }
     }
 
-    public LinkedList<Album> addAlbum(Album... albums) {
+    public List<Album> addAlbum(Album... albums) {
         this.albums.addAll(Arrays.asList(albums));
         return this.albums;
     }
@@ -135,7 +132,7 @@ public class Playlist {
         this.name = name;
     }
 
-    public LinkedList<Album> getAlbums() {
+    public List<Album> getAlbums() {
         return albums;
     }
 

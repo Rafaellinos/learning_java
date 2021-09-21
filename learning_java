@@ -1,0 +1,26 @@
+## Dynamics
+
+* Permite usar variaveis de forma simples usando o 
+conceito de inferência de tipos, ou seja, o compilador verifica o tipo de atribuição e automagicamente entende o tipo
+    - ex: var name = "emilio";
+
+* {{int teste = 1; System.out.println(teste)}} executar código em compilação, possível colocar e chamar trechos de código dentro do contexto
+do método: var list = new ArrayList<String>() {{ add("yep, it works..."); }};
+
+* Dimand operator = <>
+
+* Ghost Class, classe on the fly : var o = new Object() {public String name = "rafael"; public String getName() {return name}};
+
+* var é pra ser usado em escopo local, pode ser passado mas deve ser feito
+
+* collections => dicts, mapas, filas, listas etc, HashMaps e SortedMaps
+    - Iterable<t>
+        - Collections<T>
+            - Set<E>
+                - SortedSet <E>
+            - List<E>
+            - Queue<E>
+
+    - Map<K,V>
+        - SortedMap<k,v>
+        - ConcurentMap<k,v>
