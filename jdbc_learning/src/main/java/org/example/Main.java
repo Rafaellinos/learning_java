@@ -2,9 +2,14 @@ package org.example;
 
 import java.sql.*;
 
+@TableNameAnnotation(tableName = "contacts")
 public class Main {
+
+    public static final String DB_NAME = "testjava.db";
+    public static final String CONNECTION_STRING = "jdbc:sqlite:" + DB_NAME;
+    public static final String TABLE_NAME = "contacts";
     public static void main(String[] args) {
-        try (Connection conn = DriverManager.getConnection("jdbc:sqlite:testjava.db")) {
+        try (Connection conn = DriverManager.getConnection(CONNECTION_STRING)) {
             System.out.println("connection opened");
             Statement statement = conn.createStatement();
 
@@ -21,7 +26,7 @@ public class Main {
 //             statement.execute("UPDATE contacts set phone=123 WHERE name='Joaquim'");
 //             statement.execute("DELETE FROM contacts where name='Joaquim'");
 
-            statement.execute("SELECT * FROM contacts");
+            statement.execute("SELECT * FROM " + TABLE_NAME);
             ResultSet results = statement.getResultSet();
             // can only have 1 result set associated
             while (results.next()) {
