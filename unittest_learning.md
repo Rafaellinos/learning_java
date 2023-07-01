@@ -28,3 +28,38 @@
   - writing unit test, assertions
 - junit vintage
   - testing engine, can run junit 3 and 4
+
+## Surefire plugin maven
+
+- mvn test -> use plugin to execute tests on build and mvn test command
+- mvn backage -Dmaven.test.skip=true
+
+## Assertions and assertion message
+
+- AssertEquals(2, expectedResult, "The result should be something")
+
+## Assertions types
+
+- notEquals, assertTrue, AssertFalse, AssertNull
+- AssertThrow
+
+## Lazy error messages
+
+- use lambda for error messages like: () -> "Some Error Messsage"
+
+## Lifecycle
+
+- Order | annotation | description
+- 1st @BeforeAll setup() = can be used to start a database | must be static
+- 2nd @BeforeEach = when u need to create same object
+- 3rd @AfterEach = can be used to close database connection
+- 4rd @AfterAll cleanup() = delete database | must be static
+
+## Disable unit test
+
+- comment @Test annotation
+- @Disabled("wip")
+
+## verify throws
+
+- 

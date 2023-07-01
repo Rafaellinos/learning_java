@@ -24,3 +24,12 @@ do método: var list = new ArrayList<String>() {{ add("yep, it works..."); }};
     - Map<K,V>
         - SortedMap<k,v>
         - ConcurentMap<k,v>
+
+
+# Debugging in intelliJ
+
+- blue name in the variables session indicates that the variable has been updated
+- u can show or hide watchers
+- setting a breaking point into a field adds a watcher and when a update happens, break activates
+    - possible to change between field change or accessed
+
