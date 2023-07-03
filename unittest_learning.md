@@ -60,6 +60,10 @@
 - comment @Test annotation
 - @Disabled("wip")
 
-## verify throws
+## Test method parameters
 
-- 
+- @ParameterizedTest and @MethodSource
+- @MethodSource return input params 
+  - return a stream of arguments, each item of the stream is a test run
+- @CsvSource( {"arg1, arg2, arg3", "arg4, arg 5, arg6"} ) | '' for empty value | for null, just comma
+- @CsvFileSource(resources = "/path")
