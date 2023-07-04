@@ -67,3 +67,34 @@
   - return a stream of arguments, each item of the stream is a test run
 - @CsvSource( {"arg1, arg2, arg3", "arg4, arg 5, arg6"} ) | '' for empty value | for null, just comma
 - @CsvFileSource(resources = "/path")
+- @ValueSource = single parameter
+  - @ValueSource(strings = {"value1", "value2", "value3"})
+  - in e.g. above call 3 times for each str
+
+## Repeated tests
+
+- @RepeatedTest(3) = repeat same test 3 times
+  - receive the parameter RepetitionInfo to get total repetition and current
+- receive parameter TestInfo to get infos like method name or display name
+- @RepeatedTest(value=3, name="{displayName}, Repetition {currentRepetition} of {totalRepetitions}")
+  - it's possible to edit the display info of each repetition with the example above
+
+## Method order
+
+- annotate the test class with @TestMethodOrder(MethodOrderer.<ORDER>)
+- MethodOrderer.Random.class = random order for all methods for class
+- MethodOrderer.MethodName.class = sort by method name like methodA->methodB->methodC->...
+- MethodOrderer.OrderAnnotation.class = @Order(INDEX) test will be executed in order ASC
+
+## Class call order
+
+- Use annotation in class @Order(INDEX) for classes executions in order
+- junit-platform.properties = junit.jupiter.testclass.order.default=org.junit.jupiter.api.ClassOrder.OrderAnnotation
+- can change the classes order by this configuration
+
+## Changing lifecycle
+
+- by default is per instance
+- @TestInstance(Lifecycle.PER_CLASS) all test within the class will share same instance
+  - helpful for integration tests
+
