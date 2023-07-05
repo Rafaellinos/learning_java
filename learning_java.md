@@ -33,3 +33,36 @@ do método: var list = new ArrayList<String>() {{ add("yep, it works..."); }};
 - setting a breaking point into a field adds a watcher and when a update happens, break activates
     - possible to change between field change or accessed
 
+## import static
+
+- useful to import static member of classes without having to specify the whole name.
+
+### Example:
+
+```java
+
+public class ClassWhatever {
+    public static void someMethod() {
+        System.out.println("invoked");
+    }
+}
+```
+
+```java
+import static com.example.ClassWhatever.someMethod;
+
+public class AnotherClass {
+    public void anotherMethod() {
+        someMethod(); // called without having to specify the class
+    }
+}
+
+
+```
+
+## private, public and no explicit modifier
+
+- private: only for inner class and available only for the member inside that class
+- public: accessible for any other class in any other package
+- no explicit modifier: only accessible within the same package
+

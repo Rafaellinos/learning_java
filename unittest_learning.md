@@ -97,4 +97,15 @@
 - by default is per instance
 - @TestInstance(Lifecycle.PER_CLASS) all test within the class will share same instance
   - helpful for integration tests
+- PER_CLASS make the tests dependable of each other
+- Use case: First test create user, second update and last delete for same user (H2)
 
+
+# TDD Test-Driven Development
+
+- write unit test first
+- Red -> Green -> Refactor -> Repeat
+- Red = write unit test and fails (stop and fix the issue as soon as the test fails)
+- Green = Write application code for unit test pass
+- Refactor = Clean up. Improve unit and app code
+- Repeat = repeat all steps above until de feat is ready
