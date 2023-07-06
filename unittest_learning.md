@@ -109,3 +109,10 @@
 - Green = Write application code for unit test pass
 - Refactor = Clean up. Improve unit and app code
 - Repeat = repeat all steps above until de feat is ready
+
+# Mockito
+
+- Open source testing framework to test double
+- test double? R: Mock, Fake, Spy, Stub - Replace object
+- useful to avoid dealing with external dependencies, like a database
+- doCallRealMethod().when... for calling the real method

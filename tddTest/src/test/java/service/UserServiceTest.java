@@ -1,27 +1,49 @@
 package service;
 
+import org.example.data.UserRepository;
 import org.example.model.User;
+import org.example.model.exception.EmailVerificationServiceException;
 import org.example.model.exception.PasswordNotMatchException;
+import org.example.model.exception.UserServiceException;
+import org.example.service.EmailVerificationService;
+import org.example.service.EmailVerificationServiceImpl;
 import org.example.service.UserService;
 import org.example.service.UserServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
+
 import static org.junit.jupiter.api.Assertions.*;
 
+@ExtendWith(MockitoExtension.class)
 public class UserServiceTest {
 
-    UserService userService;
+    @InjectMocks
+    UserServiceImpl userService; // must be real implementation
 
-    @BeforeEach
-    void setUp() {
-        userService = new UserServiceImpl();
-    }
+    @Mock
+    UserRepository userRepository;
+
+    @Mock
+    EmailVerificationServiceImpl emailVerificationService;
+
+//    @BeforeEach
+//    void setUp() {
+//        userService = new UserServiceImpl();
+//    }
 
     @Test
     @DisplayName("Create User with details")
     void testCreateUser_whenUserDetailsProvided_returnUserObject() {
         // arrange
+        Mockito.when(userRepository.save(Mockito.any(User.class))).thenReturn(true);
+        Mockito.doNothing().when(emailVerificationService).scheduleEmailConfirmation(Mockito.any(User.class));
+
         String firstName = "Rafael";
         String lastName = "Veloso";
         String email = "rafael@email.com";
@@ -39,12 +61,16 @@ public class UserServiceTest {
 
         // assert
         assertNotNull(user, () -> "User not created");
+        Mockito.verify(userRepository, Mockito.times(1)) // 1 is default so its not necessary
+                .save(Mockito.any(User.class));
 
     }
 
     @Test
     void testCreateUser_whenUserCreate_returnUserWithFirstName() {
         // Arrange
+        Mockito.when(userRepository.save(Mockito.any(User.class))).thenReturn(true);
+        Mockito.doNothing().when(emailVerificationService).scheduleEmailConfirmation(Mockito.any(User.class));
         String firstName = "Rafael";
         String lastName = "Veloso";
         String email = "rafael@email.com";
@@ -110,5 +136,54 @@ public class UserServiceTest {
             );
         }, "Password and password confirm with different strings should throw exception!");
         assertEquals(thrown.getMessage(), "Password and confirm password must be equals!");
+    }
+
+    @Test
+    void testCreateUser_whenRepositoryRunTimeException_throwUserServiceException() {
+        // Arrange
+        Mockito.when(userRepository.save(Mockito.any(User.class))).thenThrow(RuntimeException.class);
+        String firstName = "Rafael";
+        String lastName = "Veloso";
+        String email = "rafael@email.com";
+        String password = "rafael@123";
+        String passwordConfirmation = "rafael@123";
+
+        // Act & Assert
+        UserServiceException userServiceException = assertThrows(UserServiceException.class, () -> {
+            userService.createUser(
+                    firstName,
+                    lastName,
+                    email,
+                    password,
+                    passwordConfirmation
+            );
+        }, "UserServiceException should have thrown");
+        assertNull(userServiceException.getMessage());
+    }
+
+    @Test
+    @DisplayName("Email verification exception")
+    void testCreateUser_whenEmailVerificationServiceExceptionThrown_throwUserServiceException() {
+        // arrange
+        Mockito.when(userRepository.save(Mockito.any(User.class))).thenReturn(true);
+        Mockito.doThrow(EmailVerificationServiceException.class)
+                .when(emailVerificationService).scheduleEmailConfirmation(Mockito.any(User.class));
+        String firstName = "Rafael";
+        String lastName = "Veloso";
+        String email = "rafael@email.com";
+        String password = "rafael@123";
+        String passwordConfirmation = "rafael@123";
+
+        // act & assert
+        assertThrows(UserServiceException.class, () -> {
+            userService.createUser(
+                    firstName,
+                    lastName,
+                    email,
+                    password,
+                    passwordConfirmation
+            );
+        }, "UserServiceException should have thrown for email error");
+        Mockito.verify(emailVerificationService).scheduleEmailConfirmation(Mockito.any(User.class));
     }
 }
