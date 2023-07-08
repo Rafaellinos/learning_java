@@ -180,3 +180,12 @@
   </executions>
 </plugin>
 ```
+
+# Unit test Spring boot
+
+- integration test between RestController -> Service -> Repository
+- Integration test with Spring framework (mock service but not Spring)
+- Acceptance test all layers, end to end, not mock for any layer
+- @SpringBootTest -> do not start web server
+- spring-boot-starter-test includes mockito and junit jupiter
+- for spring security, add spring-security-test
