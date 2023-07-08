@@ -116,3 +116,67 @@
 - test double? R: Mock, Fake, Spy, Stub - Replace object
 - useful to avoid dealing with external dependencies, like a database
 - doCallRealMethod().when... for calling the real method
+
+# Test report
+
+- Use maven surefire report to generate report on /target/site/surefire-report.html
+
+## Dependencies for generate report:
+
+```xml
+<build>
+    <plugins>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <version>3.1.2</version>
+            <configuration>
+                <!-- generate report even with fail test -->
+                <testFailureIgnore>true</testFailureIgnore>
+            </configuration>
+        </plugin>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-report-plugin</artifactId>
+            <version>3.1.2</version>
+            <executions>
+                <execution>
+                    <phase>test</phase>
+                    <goals>
+                        <goal>report</goal>
+                    </goals>
+                </execution>
+            </executions>
+        </plugin>
+    </plugins>
+</build>
+```
+
+## Generate test code report with coverage
+
+- jacoco maven plugin (java code coverage)
+- execute mvn clean test
+- look for target/site/jacoco/index.html
+
+```xml
+<plugin>
+  <groupId>org.jacoco</groupId>
+  <artifactId>jacoco-maven-plugin</artifactId>
+  <version>0.8.10</version>
+  <executions>
+    <execution>
+      <id>prepare-agent</id>
+      <goals>
+        <goal>prepare-agent</goal>
+      </goals>
+    </execution>
+    <execution>
+      <id>report</id>
+      <phase>test</phase>
+      <goals>
+        <goal>report</goal>
+      </goals>
+    </execution>
+  </executions>
+</plugin>
+```

@@ -5,11 +5,8 @@ import org.example.model.User;
 import org.example.model.exception.EmailVerificationServiceException;
 import org.example.model.exception.PasswordNotMatchException;
 import org.example.model.exception.UserServiceException;
-import org.example.service.EmailVerificationService;
 import org.example.service.EmailVerificationServiceImpl;
-import org.example.service.UserService;
 import org.example.service.UserServiceImpl;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -61,7 +58,7 @@ public class UserServiceTest {
 
         // assert
         assertNotNull(user, () -> "User not created");
-        Mockito.verify(userRepository, Mockito.times(1)) // 1 is default so its not necessary
+        Mockito.verify(userRepository, Mockito.times(1)) // 1 is default so it's not necessary
                 .save(Mockito.any(User.class));
 
     }
