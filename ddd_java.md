@@ -58,3 +58,24 @@ e.g.:
 ## ACL Anti-Corruption Layer
 
 - Usado em integrações, de-para de termos, n gerar acoplamento
+
+## Contextos compartilhados
+
+> building blocks: subdomains, domain, bounded context
+
+- Dominios em comum entre mais de um contexto. Ex: CPF compartilhado entre CPF e Aluno
+- É criado outra pasta, share.dominio.cpf
+- domain = specific business or real world area
+  - whole universe of a business or problem
+  - specific area inside a domain = subdomain. Ex: School domain and subdomain student
+  - core domain:
+    - most important, justify the existence of the system. Main problem
+    - core domain example: bank->core->transaction / e-commerce->core->shopping-card
+  - generic domain:
+    - support for the core domain
+    - notification system, RH, billing, etc
+- domain model = Defines entities, value objects, aggregates, events, etc. Software model
+
+
+
+

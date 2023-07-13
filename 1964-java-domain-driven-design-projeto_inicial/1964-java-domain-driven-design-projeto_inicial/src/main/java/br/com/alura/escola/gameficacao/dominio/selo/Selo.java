@@ -1,6 +1,6 @@
 package br.com.alura.escola.gameficacao.dominio.selo;
 
-import br.com.alura.escola.academico.dominio.aluno.CPF;
+import br.com.alura.escola.shared.dominio.CPF;
 
 public class Selo {
 
@@ -10,6 +10,7 @@ public class Selo {
     public Selo(CPF cpfDoAluno, String nome) {
         this.cpfDoAluno = cpfDoAluno;
         this.nome = nome;
+        System.out.println("Selo de " + nome + " criado para o cpf " + cpfDoAluno.getNumero());
     }
 
     public CPF getCpfDoAluno() {
