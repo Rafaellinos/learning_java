@@ -76,6 +76,8 @@ e.g.:
     - notification system, RH, billing, etc
 - domain model = Defines entities, value objects, aggregates, events, etc. Software model
 
+## Leituras: 
 
-
-
+- O livro que originou o termo DDD: https://www.amazon.com.br/Domain-Driven-Design-Eric-Evans/dp/8550800651/
+- Uma releitura com uma linguagem um pouco mais palatável: https://www.amazon.com.br/Implementando-Domain-Driven-design-Vernon/dp/8576089521/
+- Um livro prático sobre implementação em Java com SpringBoot de conceitos do DDD: https://www.amazon.com.br/Domain-Driven-Design-Spring-Boot-ebook/dp/B07K5W7CTZ
