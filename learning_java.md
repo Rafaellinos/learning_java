@@ -66,3 +66,13 @@ public class AnotherClass {
 - public: accessible for any other class in any other package
 - no explicit modifier: only accessible within the same package
 
+
+## Collections
+
+- java.util.Arrays isn't considerate part of collection
+- all collection of objects implements Collection but Maps
+- collection interface: defines the default behavior for a collection (like add, clear, remove, etc)
+- Collection is the lowest level of abstraction where: Collection->List->ArrayList(Concrete)
+- Sort is not part of Collection
+
+![java_collection_hierarchy](assets/java_collection_hierarchy.png)
