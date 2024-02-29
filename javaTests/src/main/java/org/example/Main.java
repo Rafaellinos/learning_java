@@ -6,7 +6,7 @@ import org.example.InterfaceExampleImpl;
 
 public class Main {
     public static void main(String[] args) {
-        InterfaceExampleImpl a = new InterfaceExampleImpl();
+        InterfaceExampleImpl a = new InterfaceExampleImpl(1);
 //        System.out.printf(args.getClass().isArray() + "\n");
 //        List<String> list = List.of("Rafael", "yasmin");
 //        System.out.printf(list.getClass().isArray() + "\n");
