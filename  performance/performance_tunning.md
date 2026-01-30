@@ -113,3 +113,82 @@ intx Tier2CompileThreshold = 0
 intx Tier3CompileThreshold = 2000
 intx Tier4CompileThreshold = 15000
 ```
+
+### Java memory
+
+- stack (stack machine based)
+  - datastructures (First in last out)
+  - every thread has its own stack
+  - passing primitives to methods actually copies the value, there is no pointer/reference
+  - local primitives
+- heap
+  - complex objects (not stored in stacks)
+  - pointer/reference
+  - local objects will be stores as reference in the stack
+- metaspace
+
+
+```java
+void main() {
+  int number = 1;
+  String description = "one";
+}
+```
+
+In the example above to stack:
+
+- push [int number]
+- heap [String description]
+- push [description reference]
+
+#### Java stack example
+
+```mermaid
+sequenceDiagram
+    participant Code as Java Code
+    participant Bytecode as JVM Bytecode
+    participant Stack as Operand Stack
+    
+    Note over Code: int result = 5 + 3;
+    
+    Note over Bytecode: Step 1: iconst_5
+    Bytecode->>Stack: Push 5
+    Note over Stack: [5]
+    
+    Note over Bytecode: Step 2: iconst_3
+    Bytecode->>Stack: Push 3
+    Note over Stack: [5, 3] ← top
+    
+    Note over Bytecode: Step 3: iadd
+    Stack->>Bytecode: Pop 3
+    Stack->>Bytecode: Pop 5
+    Note over Bytecode: Calculate: 5 + 3 = 8
+    Bytecode->>Stack: Push 8
+    Note over Stack: [8]
+    
+    Note over Bytecode: Step 4: istore_1
+    Stack->>Bytecode: Pop 8
+    Note over Bytecode: Store 8 in local variable 1 (result)
+    Note over Stack: []
+```
+
+![java_stack_machine](assets/java_stack_machine.png)
+
+```java
+void main() {
+  int value = 12;
+  calculate(value);
+  System.out.println(value); // will print 12 because primitive is always a copy
+}
+
+static void calc(int someValue) {
+    someValue = someValue * 100;
+}
+```
+
+### final keyword
+
+- potentially optimize performance [inlining]
+  - inlining java replaces the reference with its actual constant value
+- cannot be re-assign
+- JVM can inline non-final methods
