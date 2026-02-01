@@ -106,9 +106,11 @@ graph LR
 
 #### Default values of tiered compilation
 
+Specify the amount of times the method will run until JIT tries to optimize (bytecode to machine code)
+
 ```bash
 java -XX:+PrintFlagsFinal -version | grep CompileThreshold
-intx CompileThreshold = 10000
+intx CompileThreshold = 10000 # legacy flag
 intx Tier2CompileThreshold = 0
 intx Tier3CompileThreshold = 2000
 intx Tier4CompileThreshold = 15000
@@ -186,9 +188,64 @@ static void calc(int someValue) {
 }
 ```
 
-### final keyword
+## The final keyword
 
 - potentially optimize performance [inlining]
   - inlining java replaces the reference with its actual constant value
 - cannot be re-assign
 - JVM can inline non-final methods
+
+## Escaping References (Reference Scape)
+
+- Object becomes accessible outside the intended scope
+- Can allow uncontrolled or unsafe access to an object
+
+```java
+public class AllowedPersonal {
+  private Map<String, Person> personMap;
+
+  public AllowedPersonal() {
+    this.personMap = new HashMap<>();
+  }
+
+  public void addPerson(Person person) {
+    this.personMap.put(person.id, person);
+  }
+
+  public Map<String, Person> getPersonMap() {
+    // escaped reference!!! exposing internals structure
+    return this.personMap;
+  }
+}
+```
+
+- Avoid returning pointers to internals structures
+- Use defensive copies eg: `return Collections.unmodifiableMap(this.personMap);`
+  * May impact performance
+  * `return Map.copyOf(this.personMap);` for java 10+ (this version checks if the collection is already unmodifiable)
+- In the example above, can make `AllowedPersonal` iterable eg: `AllowedPersonal implements Iterable<Person>`
+  * Still possible to remove/mutate the internal state with `itarable.next();iterable.remove();`
+
+## The Metaspace
+
+- Stores metadata in general
+- static variables (Objects in heap but the pointer in metaspace, primitives entirely in metaspace)
+- Metaspace is not accessible by programmers (never collected by GB)
+- Java 7 or bellow, PermGen was used (can get full and throw OutOfMemoryError)
+  * `-XX:PermSize=<NUMBER>` and `-XX:MaxPermSize=<NUMBER>` is no longer valid for java 8+
+
+### String pools
+
+- Java automatically optimize strings objects by identifying duplicated and not recreating them
+- String are immutable
+- `"76" == String.valueOf(76)` is false, calculated values doesn't get set in the string pool
+  * can be optimized in the future after some JVM iterations
+- `"76" == String.valueOf(76).intern()` is true, the `intern` method checks the presence in string pool
+- The string pool stores values based on hash codes
+  * hash table in string pool has a size
+
+#### String pools flags
+
+- `-XX:+PrintStringTableStatistics`
+
+
