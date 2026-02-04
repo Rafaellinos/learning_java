@@ -94,7 +94,7 @@ graph LR
 
 #### Tuning Native compilation on VM
 
-- `java -XX:+PrintFlagsFinal` show all flags and default values
+- `java -XX:+UnlockDiagnosticVMOptions -XX:+PrintFlagsFinal` show all flags and default values
 - `jinfo -flag CICompilerCount <process-id>`
   * shows the flag for running app, in this case threads for compilation
 - `-XX:CICompilerCount=<numeber>`
@@ -246,6 +246,21 @@ public class AllowedPersonal {
 
 #### String pools flags
 
+- java11+ dynamically sized based on heap
 - `-XX:+PrintStringTableStatistics`
+- `-XX:StringTableSize=<NUMBER>` prime numbers is a better option
+  * if average bucket size > 40 should increase
+  * table size cannot be bigger than heapsize
+- `-XX:MaxHeapSize=4GB` or `-Xmx4GB`
+- `-XX:InitialHeapSize=4GB` or `-Xms4GB`
 
+## Garbage Collection (GC)
 
+- deletes objects that is no longer needed
+- Java is managed (memory)
+- objects in heap that's no longer reachable in the stack is eligible for GC
+- `System.gc()` suggest the GC for JVM but doesn't guarantee the GC run
+- in java 11+, GC give unused memory back to OS (small heap)
+  - set `-Xms` to guarantee that the heap never goes lower than specified (increase heap cost OS ops)
+- `finalize()` of the object is called on GC. Deprecated since java 9+
+  - finalize may not be called if the application shutdown
