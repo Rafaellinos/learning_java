@@ -1,19 +1,19 @@
-# java performance tunning
+# Java Performance Tuning
 
 
-- choose right jvm
-- programming/execution environment
+- Choose the right JVM
+- Programming/execution environment
 
-## JIT and Code cache
+## JIT and Code Cache
 
 - Main.java -> javac -> Main.class (compiles)
-- JVM interpreter Main.class
-- Just in time compilation (JIT)
-  - branch runs often
-  - jvm decides to compile into native code specific for OS (runs faster)
-  - Code runs faster the longer it is left to run (long-running apps gets profiled by jvm)
-  - any code block of code can be JIT compile
-  - `-XX:+PrintCompilation` show which compilation is being made
+- JVM interprets Main.class
+- Just-in-time compilation (JIT)
+  - When a branch runs often
+  - JVM decides to compile into native code specific to the OS (runs faster)
+  - Code runs faster the longer it is left to run (long-running apps get profiled by JVM)
+  - Any block of code can be JIT compiled
+  - `-XX:+PrintCompilation` shows which compilation is being made
 
 
 ### example of `-XX:+PrintCompilation`
@@ -25,13 +25,14 @@
 ```
 
 - first column: number of milliseconds since JVM started
-- second column: compilation Id
-- third column compilation mode: 
-  - `n` means native method (non-java impl, like C/C++)
+- second column: compilation ID
+- third column: compilation mode: 
+  - `n` means native method (non-Java implementation, like C/C++)
   - `s` synchronized method
-  - `!` deoptimized, interpreter
-  - `%` high-level optimization
-  - `made not entrant` de-optimized, non-hot
+  - `!` method has been deoptimized
+  - `%` high-level optimization (OSR - On Stack Replacement)
+    - **Note:** OSR specifically replaces the running code on the stack with optimized version, typically for long-running loops
+  - `made not entrant` deoptimized, no longer hot
 - fourth column: compilation level [0-4]
 - last column: method name
 
@@ -47,66 +48,69 @@ graph LR
     C2 --> N4[Native Level 4]
 ```
 
-- Jvm decides which level should be used, more used higher the probability to increase the level
-- To save into a log file = `-XX:+UnlockDiagnosticVMOptions -XX:+LogCompilation`
+- The JVM decides which level should be used; the more a method is used, the higher the probability it will be promoted to a higher compilation level
+- To save compilation logs to a file: `-XX:+UnlockDiagnosticVMOptions -XX:+LogCompilation`
 
 ### Code cache (or CodeHeap)
 
 - Area where JVM stores bytecode compiled into native code
 - Set the code cache:
-  - `-XX:InitialCodeCacheSize=28M` when app starts eg: 
+  - `-XX:InitialCodeCacheSize=28M` when app starts, e.g.: 
   - `-XX:ReservedCodeCacheSize` max code cache
-  - `-XX:CodeCacheExpansionSize` how fast the cache show grow
+  - `-XX:CodeCacheExpansionSize` how fast the cache should grow
 - Warning if the code cache is full: `VM warning: CodeCache is full.`
-- `-XX:+PrintCodeCache` shows the code cache usage and available
-  - java8+ code cache up to 240MB
+- `-XX:+PrintCodeCache` shows the code cache usage and available space
+  - Java 8+ code cache up to 240MB
+  - **Note:** Default code cache size varies by JVM version and platform. Java 9+ may have different defaults.
 
 ### Jconsole
 
-- Allows to connect to a java process running locally or remote
-- Shows heap, code cache, etc
-- location e.g.: `C:\Program Files\Java\jdk-21.0.10\bin\jconsole.exe`
-- :warning: connecting to jvm causes performance degradation to the running JVM
-  - The jvm connects to `jconsole` and the communication can impact the application
+- Allows you to connect to a Java process running locally or remotely
+- Shows heap, code cache, etc.
+- Location, e.g.: `C:\Program Files\Java\jdk-21.0.10\bin\jconsole.exe`
+- :warning: Connecting to JVM causes performance degradation to the running JVM
+  - The JVM connects to `jconsole` and the communication can impact the application
 
-### 32 bits vs 64bits
+### 32 bits vs 64 bits
 
-- client compiler = short running app
-- server compiler = long running app
+- client compiler = short-running app
+- server compiler = long-running app
 - `-client` faster startup (no tier 4 compilation)
-  - eg `java -client`
+  - e.g., `java -client`
 - `-server` or `-d64` can be used
 
-| 32 bit                   | 64 bit                            |
-|--------------------------|-----------------------------------|
-| faster for heap < 3GB    | faster for long/double            |
-| max heap size 4GB        | Mandatory for heap > 4GB          |
-| -                        | max heap size depends on OS       |
-| client compiler only(c1) | client and server compiler(c1/c2) |
+| 32 bit                    | 64 bit                             |
+|---------------------------|------------------------------------|
+| faster for heap < 3GB     | faster for long/double             |
+| max heap size 4GB         | Mandatory for heap > 4GB           |
+| -                         | max heap size depends on OS        |
+| client compiler only (C1) | client and server compiler (C1/C2) |
+
+**Note:** 32-bit JVM support has been removed in recent Java versions (Java 11+). Modern applications typically use 64-bit JVMs.
 
 
 ### TieredCompilation
 
 ![java_jit](assets/jit_java.png)
 
-- `-XX:-TieredCompilation` on or off for + and -
-- Run the process only on interpreter mode
+- `-XX:-TieredCompilation` use + to enable or - to disable
+- Run the process only in interpreter mode
 
-#### Tuning Native compilation on VM
+#### Tuning Native Compilation on VM
 
-- `java -XX:+UnlockDiagnosticVMOptions -XX:+PrintFlagsFinal` show all flags and default values
+- `java -XX:+UnlockDiagnosticVMOptions -XX:+PrintFlagsFinal` shows all flags and their default values
 - `jinfo -flag CICompilerCount <process-id>`
-  * shows the flag for running app, in this case threads for compilation
-- `-XX:CICompilerCount=<numeber>`
-  * sets the number of threads to compilation (min of 2 threads)
-- `-XX:CompileThrshold=<number>`
-  * sets the amount of time the method must run until jvm tries to optimize
-- `-XX:TieredStopAtLevel=<number>` setting to 1 will disable `c2` compiler
-- `-Xint` disable all JIT compiler, only interpreter mode
+  * shows the flag for a running app; in this case, threads for compilation
+- `-XX:CICompilerCount=<number>`
+  * sets the number of threads for compilation (minimum of 2 threads)
+- `-XX:CompileThreshold=<number>`
+  * sets the number of times the method must run before the JVM tries to optimize it
+- `-XX:TieredStopAtLevel=<number>` setting to 1 will disable the `C2` compiler
+- `-Xint` disables all JIT compilation, interpreter mode only
 
-#### Default values of tiered compilation
+#### Default Values of Tiered Compilation
 
-Specify the amount of times the method will run until JIT tries to optimize (bytecode to machine code)
+Specifies the number of times the method must run before JIT tries to optimize (bytecode to machine code)
 
 ```bash
 java -XX:+PrintFlagsFinal -version | grep CompileThreshold
@@ -119,14 +123,14 @@ intx Tier4CompileThreshold = 15000
 ### Java memory
 
 - stack (stack machine based)
-  - datastructures (First in last out)
+  - data structures (First in last out)
   - every thread has its own stack
   - passing primitives to methods actually copies the value, there is no pointer/reference
   - local primitives
 - heap
   - complex objects (not stored in stacks)
   - pointer/reference
-  - local objects will be stores as reference in the stack
+  - local objects will be stored as reference in the stack
 - metaspace
 
 
@@ -137,11 +141,11 @@ void main() {
 }
 ```
 
-In the example above to stack:
+In the example above for the stack:
 
-- push [int number]
-- heap [String description]
-- push [description reference]
+- push [int number] (value stored directly on stack)
+- heap [String description] (object stored in heap)
+- push [description reference] (reference stored on stack)
 
 #### Java stack example
 
@@ -190,10 +194,10 @@ static void calc(int someValue) {
 
 ## The final keyword
 
-- potentially optimize performance [inlining]
-  - inlining java replaces the reference with its actual constant value
-- cannot be re-assign
-- JVM can inline non-final methods
+- potentially optimizes performance [inlining]
+  - inlining: Java replaces the reference with its actual constant value at compile time
+- cannot be re-assigned
+- JVM can inline non-final methods (through runtime profiling)
 
 ## Escaping References (Reference Scape)
 
@@ -213,54 +217,57 @@ public class AllowedPersonal {
   }
 
   public Map<String, Person> getPersonMap() {
-    // escaped reference!!! exposing internals structure
+    // escaped reference!!! exposing internal structure
     return this.personMap;
   }
 }
 ```
 
-- Avoid returning pointers to internals structures
-- Use defensive copies eg: `return Collections.unmodifiableMap(this.personMap);`
+- Avoid returning pointers to internal structures
+- Use defensive copies e.g.: `return Collections.unmodifiableMap(this.personMap);`
   * May impact performance
   * `return Map.copyOf(this.personMap);` for java 10+ (this version checks if the collection is already unmodifiable)
-- In the example above, can make `AllowedPersonal` iterable eg: `AllowedPersonal implements Iterable<Person>`
-  * Still possible to remove/mutate the internal state with `itarable.next();iterable.remove();`
+- In the example above, can make `AllowedPersonal` iterable e.g.: `AllowedPersonal implements Iterable<Person>`
+  * Still possible to remove/mutate the internal state with `iterator.next();iterator.remove();`
 
 ## The Metaspace
 
-- Stores metadata in general
+- Stores metadata in general (class definitions, method information, etc.)
 - static variables (Objects in heap but the pointer in metaspace, primitives entirely in metaspace)
-- Metaspace is not accessible by programmers (never collected by GB)
-- Java 7 or bellow, PermGen was used (can get full and throw OutOfMemoryError)
-  * `-XX:PermSize=<NUMBER>` and `-XX:MaxPermSize=<NUMBER>` is no longer valid for java 8+
+- Metaspace is not accessible by programmers (not collected by GC in the same way as heap)
+  - **Note:** While metaspace can be garbage collected when classes are unloaded, this is rare in typical applications
+- Java 7 or below, PermGen was used (can get full and throw OutOfMemoryError)
+  * `-XX:PermSize=<NUMBER>` and `-XX:MaxPermSize=<NUMBER>` is no longer valid for Java 8+
 
 ### String pools
 
-- Java automatically optimize strings objects by identifying duplicated and not recreating them
-- String are immutable
-- `"76" == String.valueOf(76)` is false, calculated values doesn't get set in the string pool
+- Java automatically optimizes string objects by identifying duplicated strings and not recreating them
+- Strings are immutable
+- `"76" == String.valueOf(76)` is false, calculated values don't get set in the string pool
   * can be optimized in the future after some JVM iterations
 - `"76" == String.valueOf(76).intern()` is true, the `intern` method checks the presence in string pool
+  * **Note:** Using `intern()` can have performance implications if overused, as it adds strings to the string pool which is managed by the JVM
 - The string pool stores values based on hash codes
   * hash table in string pool has a size
 
 #### String pools flags
 
-- java11+ dynamically sized based on heap
+- Java 11+ dynamically sized based on heap
 - `-XX:+PrintStringTableStatistics`
-- `-XX:StringTableSize=<NUMBER>` prime numbers is a better option
+- `-XX:StringTableSize=<NUMBER>` prime numbers are a better option
   * if average bucket size > 40 should increase
-  * table size cannot be bigger than heapsize
+  * table size cannot be bigger than heap size
 - `-XX:MaxHeapSize=4GB` or `-Xmx4GB`
 - `-XX:InitialHeapSize=4GB` or `-Xms4GB`
 
 ## Garbage Collection (GC)
 
-- deletes objects that is no longer needed
+- deletes objects that are no longer needed
 - Java is managed (memory)
-- objects in heap that's no longer reachable in the stack is eligible for GC
-- `System.gc()` suggest the GC for JVM but doesn't guarantee the GC run
-- in java 11+, GC give unused memory back to OS (small heap)
-  - set `-Xms` to guarantee that the heap never goes lower than specified (increase heap cost OS ops)
-- `finalize()` of the object is called on GC. Deprecated since java 9+
-  - finalize may not be called if the application shutdown
+- objects in heap that are no longer reachable in the stack are eligible for GC
+- `System.gc()` suggests GC to the JVM but doesn't guarantee the GC will run
+- In Java 11+, GC gives unused memory back to OS (small heap)
+  - set `-Xms` to guarantee that the heap never goes lower than specified (increasing heap costs OS operations)
+- method `finalize()` is called on object GC cleanup. Deprecated since Java 9+
+  - finalize may not be called if the application shuts down
+  - **Note:** `finalize()` is removed in Java 18+. Use `Cleaner` API or try-with-resources for resource management instead.

@@ -77,8 +77,9 @@ When used: In CI/CD pipelines or for team-wide distribution.
   - `mvn buildplan:list-phase` list of plugins in each phase
   - `mvn verify -X` can show a Stale source code that trigger a re-compile, delete commented files.
     - Delete files with all lines commented or exclude with maven-compiler-plugin+configuration excludes
-  - `mvn project-info-reports:dependencies` dependencies.html with dependency tree and licences
-  - `mvn licence:third-party-report` gives docs in browser (third-party-report.html) licences
+    - see: `https://stackoverflow.com/questions/17944108/maven-compiler-plugin-always-detecting-a-set-of-sources-as-stale`
+  - `mvn project-info-reports:dependencies` dependencies.html with dependency tree and licenses
+  - `mvn licence:third-party-report` gives docs in browser (third-party-report.html) licenses
 
 Ignore dependency
 ```xml
@@ -99,4 +100,3 @@ Ignore dependency
   - incremental build
 
 font: https://github.com/rfichtner/maven-survival-guide
-
