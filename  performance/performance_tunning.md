@@ -271,3 +271,9 @@ public class AllowedPersonal {
 - method `finalize()` is called on object GC cleanup. Deprecated since Java 9+
   - finalize may not be called if the application shuts down
   - **Note:** `finalize()` is removed in Java 18+. Use `Cleaner` API or try-with-resources for resource management instead.
+
+### Heap Dump
+
+- `-XX:+HeapDumpOnOutOfMemoryError`
+- `-XX:HeapDumpPath=<PATH>`
+- Use eclipse memory analyzer (MAT)
